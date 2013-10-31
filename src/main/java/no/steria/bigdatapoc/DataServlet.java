@@ -6,6 +6,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -38,7 +41,22 @@ public class DataServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ServletInputStream inputStream = req.getInputStream();
-        System.out.println(toString(inputStream));
+        String json = toString(inputStream);
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            System.out.println(jsonArray.length());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                System.out.println(jsonObject);
+                System.out.println("timestamp:" + jsonObject.getString("timeStamp"));
+                System.out.println("kw:" + jsonObject.getDouble("kw"));
+                System.out.println("stationId:" + jsonObject.getString("stationId"));
+                System.out.println("council:" + jsonObject.getString("council"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 
