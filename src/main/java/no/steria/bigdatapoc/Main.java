@@ -1,6 +1,5 @@
 package no.steria.bigdatapoc;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
