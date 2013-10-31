@@ -18,7 +18,7 @@ public class Database {
     }
 
     public void setUp() {
-        Cluster cluster = new Cluster.Builder().addContactPoints("127.0.0.1").build();
+        Cluster cluster = new Cluster.Builder().addContactPoints("192.168.0.1").build();
         session = cluster.connect();
 
         Metadata metadata = cluster.getMetadata();
