@@ -15,7 +15,8 @@ import com.datastax.driver.core.Session;
 
 public class POCServlet extends HttpServlet {
     private final Session session = Database.getInstance().getSession();
-    private static final String keyspaceName = "POC";
+    private static final String keyspaceName = Database.keyspaceName;
+
     private static final String tableName = keyspaceName + ".power";
 
     @Override

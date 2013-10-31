@@ -5,7 +5,7 @@ import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
 
 public class Database {
-    private static final String keyspaceName = "POC";
+    public static final String keyspaceName = "POC1";
     private static final String tableName = keyspaceName + ".power";
     private Session session;
 
@@ -18,7 +18,7 @@ public class Database {
     }
 
     public void setUp() {
-        Cluster cluster = new Cluster.Builder().addContactPoints("192.168.0.1").build();
+        Cluster cluster = new Cluster.Builder().addContactPoints("localhost").build();
         session = cluster.connect();
 
         Metadata metadata = cluster.getMetadata();
