@@ -6,7 +6,9 @@ import com.datastax.driver.core.Session;
 
 public class Database {
     public static final String keyspaceName = "POCJAN";
-    private static final String tableName = keyspaceName + ".power";
+    private static final String station = keyspaceName + ".station";
+    private static final String council = keyspaceName + ".council";
+    private static final String stationDay = keyspaceName + ".station_day";
     private Session session;
 
     private static class DatabaseHolder {
@@ -25,9 +27,14 @@ public class Database {
         System.out.println(String.format("Connected to cluster '%s' on %s.", metadata.getClusterName(), metadata.getAllHosts()));
 //        session.execute("DROP KEYSPACE IF EXISTS " + keyspaceName);
 //        session.execute("CREATE KEYSPACE " + keyspaceName + " WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' }");
-        System.out.println("Keyspace " + keyspaceName + " created");
-//        session.execute("CREATE TABLE " + tableName + "(timestamp timestamp, stationid text, kw double, council text, PRIMARY KEY(timestamp, stationid))");
-        System.out.println("Table " + tableName + " created");
+////        System.out.println("Keyspace " + keyspaceName + " created");
+//        session.execute("CREATE TABLE " + station + "(timestamp timestamp, stationid text, kw double, council text, " +
+//                "PRIMARY KEY(stationid,timestamp))");
+//        session.execute("CREATE TABLE " + council + "(tid timestamp, stationid text, kw double, council text, " +
+//                "PRIMARY KEY(council,stationid, tid))");
+        //       session.execute("CREATE TABLE " + stationDay + "(stationid text, kw double, council text, day text, time text, tid timestamp" +
+        //       "PRIMARY KEY((stationid, day), tid))");
+
     }
 
 
