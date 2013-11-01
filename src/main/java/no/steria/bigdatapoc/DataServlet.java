@@ -1,6 +1,7 @@
 package no.steria.bigdatapoc;
 
 import com.datastax.driver.core.BatchStatement;
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 import org.jfree.chart.ChartFactory;
@@ -23,9 +24,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class DataServlet extends HttpServlet {
-
+    private static final AtomicLong counter = new AtomicLong(0);
+    private static final AtomicLong counter2 = new AtomicLong(0);
     private Session session = Database.getInstance().getSession();
     private static final String keyspaceName = Database.keyspaceName;
     private static final String tableName = keyspaceName + ".power";
@@ -55,9 +58,9 @@ public class DataServlet extends HttpServlet {
         String json = toString(inputStream);
         try {
             JSONArray jsonArray = new JSONArray(json);
-            System.out.println(jsonArray.length());
             PreparedStatement insert = session.prepare("INSERT INTO " + tableName + "(timestamp, stationid, kw, council) VALUES (?, ?, ?, ?)");
             BatchStatement batch = new BatchStatement();
+            insert.setConsistencyLevel(ConsistencyLevel.ANY);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String timeStamp = jsonObject.getString("timeStamp");
@@ -65,12 +68,16 @@ public class DataServlet extends HttpServlet {
                 String stationId = jsonObject.getString("stationId");
                 String council = jsonObject.getString("council");
                 batch.add(insert.bind(new DateTime(timeStamp).toDate(), stationId, kw, council));
+                counter.incrementAndGet();
             }
             session.execute(batch);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        counter2.incrementAndGet();
+        if (counter2.get() % 10 == 0) {
+            System.out.println(counter);
+        }
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 

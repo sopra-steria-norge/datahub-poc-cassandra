@@ -14,7 +14,7 @@ public class Main {
         Server server = new Server(8080);
         server.setHandler(new WebAppContext("src/main/webapp", "/"));
         server.start();
-        System.out.println(httpPost("http://localhost:9000/push/start", "{\"intervalCount\":3000,\"measurementFrequencyMin\":15,\"sendDelaySec\":0,\"startDate\":\"2013-01-01\",\"url\":\"http://localhost:8080/data\",\"councilFilter\":\"0118,0111\",\"parallel\":1, \"dataPerCall\":1000}"));
+        System.out.println(httpPost("http://192.168.0.3:9000/push/start", "{\"intervalCount\":35000,\"measurementFrequencyMin\":15,\"sendDelaySec\":0,\"startDate\":\"2013-01-01\",\"url\":\"http://192.168.0.1:8080/data\",\"councilFilter\":\"\",\"parallel\":1, \"dataPerCall\":1000}"));
         server.join();
     }
 
