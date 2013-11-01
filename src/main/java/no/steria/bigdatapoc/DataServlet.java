@@ -1,11 +1,15 @@
 package no.steria.bigdatapoc;
 
+import com.datastax.driver.core.BatchStatement;
+import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.Session;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,9 +19,16 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class DataServlet extends HttpServlet {
+
+    private Session session = Database.getInstance().getSession();
+    private static final String keyspaceName = Database.keyspaceName;
+    private static final String tableName = keyspaceName + ".power";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -45,14 +56,17 @@ public class DataServlet extends HttpServlet {
         try {
             JSONArray jsonArray = new JSONArray(json);
             System.out.println(jsonArray.length());
+            PreparedStatement insert = session.prepare("INSERT INTO " + tableName + "(timestamp, stationid, kw, council) VALUES (?, ?, ?, ?)");
+            BatchStatement batch = new BatchStatement();
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                System.out.println(jsonObject);
-                System.out.println("timestamp:" + jsonObject.getString("timeStamp"));
-                System.out.println("kw:" + jsonObject.getDouble("kw"));
-                System.out.println("stationId:" + jsonObject.getString("stationId"));
-                System.out.println("council:" + jsonObject.getString("council"));
+                String timeStamp = jsonObject.getString("timeStamp");
+                double kw = jsonObject.getDouble("kw");
+                String stationId = jsonObject.getString("stationId");
+                String council = jsonObject.getString("council");
+                batch.add(insert.bind(new DateTime(timeStamp).toDate(), stationId, kw, council));
             }
+            session.execute(batch);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -61,11 +75,11 @@ public class DataServlet extends HttpServlet {
     }
 
     private static String toString(InputStream inputStream) throws IOException {
-        try (Reader reader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"))) {
             StringBuilder result = new StringBuilder();
-            int c;
-            while ((c = reader.read()) != -1) {
-                result.append((char)c);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                result.append(line);
             }
             return result.toString();
         }

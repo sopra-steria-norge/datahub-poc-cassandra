@@ -14,7 +14,7 @@ public class Main {
         Server server = new Server(8080);
         server.setHandler(new WebAppContext("src/main/webapp", "/"));
         server.start();
-        System.out.println(httpPost("http://localhost:9000/push/start", "{\"intervalCount\":300,\"measurementFrequencyMin\":15,\"sendDelaySec\":1,\"startDate\":\"2013-01-01\",\"url\":\"http://localhost:8080/data\",\"councilFilter\":\"0118,0111\",\"parallel\":1, \"dataPerCall\":1000}"));
+        System.out.println(httpPost("http://localhost:9000/push/start", "{\"intervalCount\":3000,\"measurementFrequencyMin\":15,\"sendDelaySec\":0,\"startDate\":\"2013-01-01\",\"url\":\"http://localhost:8080/data\",\"councilFilter\":\"0118,0111\",\"parallel\":1, \"dataPerCall\":1000}"));
         server.join();
     }
 
@@ -29,11 +29,11 @@ public class Main {
     }
 
     private static String toString(InputStream inputStream) throws IOException {
-        try (Reader reader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"))) {
             StringBuilder result = new StringBuilder();
-            int c;
-            while ((c = reader.read()) != -1) {
-                result.append((char)c);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                result.append(line);
             }
             return result.toString();
         }

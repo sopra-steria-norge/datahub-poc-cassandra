@@ -1,22 +1,17 @@
 package no.steria.bigdatapoc;
 
-import java.io.IOException;
+import com.datastax.driver.core.*;
+import org.joda.time.DateTime;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.datastax.driver.core.BatchStatement;
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
+import java.io.IOException;
 
 public class POCServlet extends HttpServlet {
     private final Session session = Database.getInstance().getSession();
     private static final String keyspaceName = Database.keyspaceName;
-
     private static final String tableName = keyspaceName + ".power";
 
     @Override
@@ -29,12 +24,10 @@ public class POCServlet extends HttpServlet {
     }
 
     public void insert() {
-        PreparedStatement insert = session.prepare("INSERT INTO " + tableName + "(maalenr, forbruk, frekvens, postnr) VALUES (?, ?, ?, ?)");
+        PreparedStatement insert = session.prepare("INSERT INTO " + tableName + "(timestamp, stationid, kw, council) VALUES (?, ?, ?, ?)");
 
         BatchStatement batch = new BatchStatement();
-        batch.add(insert.bind("00001", "10", "50.1", "1523"));
-        batch.add(insert.bind("00002", "15", "50", "1337"));
-        batch.add(insert.bind("00003", "20", "49.9", "1523"));
+        batch.add(insert.bind(new DateTime("2013-01-01T00:45:00.000+01:00").toDate(), "0118RH467", 50.1d, "0118"));
         session.execute(batch);
     }
 
