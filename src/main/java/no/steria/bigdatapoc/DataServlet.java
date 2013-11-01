@@ -76,7 +76,7 @@ public class DataServlet extends HttpServlet {
         }
         counter2.incrementAndGet();
         if (counter2.get() % 10 == 0) {
-            System.out.println(counter);
+            System.out.println(counter.get());
         }
         resp.setStatus(HttpServletResponse.SC_OK);
     }

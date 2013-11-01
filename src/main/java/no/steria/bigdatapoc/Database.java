@@ -26,7 +26,7 @@ public class Database {
 //        session.execute("DROP KEYSPACE IF EXISTS " + keyspaceName);
 //        session.execute("CREATE KEYSPACE " + keyspaceName + " WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' }");
         System.out.println("Keyspace " + keyspaceName + " created");
-//        session.execute("CREATE TABLE " + tableName + "(timestamp timestamp,stationid text, kw double, council text, PRIMARY KEY(timestamp, stationid))");
+//        session.execute("CREATE TABLE " + tableName + "(timestamp timestamp, stationid text, kw double, council text, PRIMARY KEY(timestamp, stationid))");
         System.out.println("Table " + tableName + " created");
     }
 

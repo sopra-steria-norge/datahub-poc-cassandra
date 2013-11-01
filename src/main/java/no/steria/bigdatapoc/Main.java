@@ -11,10 +11,10 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Database.getInstance().setUp();
 
-        Server server = new Server(8080);
+        Server server = new Server(8081);
         server.setHandler(new WebAppContext("src/main/webapp", "/"));
         server.start();
-        System.out.println(httpPost("http://192.168.0.3:9000/push/start", "{\"intervalCount\":35000,\"measurementFrequencyMin\":15,\"sendDelaySec\":0,\"startDate\":\"2013-01-01\",\"url\":\"http://192.168.0.1:8080/data\",\"councilFilter\":\"\",\"parallel\":1, \"dataPerCall\":1000}"));
+//        System.out.println(httpPost("http://192.168.0.3:9000/push/start", "{\"intervalCount\":35000,\"measurementFrequencyMin\":15,\"sendDelaySec\":0,\"startDate\":\"2013-01-01\",\"url\":\"http://192.168.0.1:8080/data\",\"councilFilter\":\"0118\",\"parallel\":1, \"dataPerCall\":1000}"));
         server.join();
     }
 
@@ -22,7 +22,7 @@ public class Main {
         URLConnection conn = new URL(url).openConnection();
         conn.setRequestProperty("Content-Type", "text/json; charset=utf-8");
         conn.setDoOutput(true);
-        try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),"utf-8"))) {
+        try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(), "utf-8"))) {
             printWriter.append(answer);
         }
         return toString(conn.getInputStream());
