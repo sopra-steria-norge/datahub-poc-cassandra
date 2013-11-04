@@ -23,11 +23,6 @@ public class DataServlet extends HttpServlet {
     private static final AtomicLong counter = new AtomicLong(0);
     private static final AtomicLong counter2 = new AtomicLong(0);
     private Session session = Database.getInstance().getSession();
-    private static final String keyspaceName = Database.keyspaceName;
-    private static final String tableName = keyspaceName + ".power";
-    private static final String station = keyspaceName + ".station";
-    private static final String council = keyspaceName + ".council";
-    private static final String station_day = keyspaceName + ".station_day";
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -37,8 +32,6 @@ public class DataServlet extends HttpServlet {
 
             JSONArray jsonArray = new JSONArray(json);
             PreparedStatement insertStation = session.prepare("INSERT INTO POCJAN.stasjon_dag (tidsstempel, dag, stasjon, kommune, kw) VALUES (?, ?, ?, ?,?)");
-//            PreparedStatement insertCouncil = session.prepare("INSERT INTO " + council + "(tid, stationid, kw, council) VALUES (?, ?, ?, ?)");
-//            PreparedStatement insertStationDay = session.prepare("INSERT INTO " + station_day + "( stationid, kw, council,day,time,tid) VALUES (?, ?, ?, ?)");
             BatchStatement batch = new BatchStatement();
             batch.setConsistencyLevel(ConsistencyLevel.QUORUM);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -48,8 +41,6 @@ public class DataServlet extends HttpServlet {
                 String stationId = jsonObject.getString("stationId");
                 String council = jsonObject.getString("council");
                 batch.add(insertStation.bind(new DateTime(timeStamp).toDate(), timeStamp.split("T")[0], stationId, council, kw));
-//                batch.add(insertCouncil.bind(new DateTime(timeStamp).toDate(), stationId, kw, council));
-//                batch.add(insertStationDay.bind(stationId, kw, council,timeStamp.split("T")[0],timeStamp.split("T")[1],new DateTime(timeStamp).toDate()));
                 counter.incrementAndGet();
             }
             session.execute(batch);

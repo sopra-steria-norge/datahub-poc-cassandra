@@ -15,8 +15,6 @@ import java.io.IOException;
 
 public class POCChartServlet extends HttpServlet {
     private static final Session session = Database.getInstance().getSession();
-    public static final String keyspaceName = "POCJAN";
-    private static final String tableName = keyspaceName + ".stationcouncil";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,13 +34,12 @@ public class POCChartServlet extends HttpServlet {
 
     public void select(DefaultCategoryDataset dataset) {
         System.out.println("no.steria.bigdatapoc.POCChartServlet.select");
-        PreparedStatement select = session.prepare("SELECT * FROM POCJAN.stasjon_dag where stasjon  = ? and dag = ?");
+        PreparedStatement select = session.prepare("SELECT * FROM POC.stasjon_dag where stasjon  = ? and dag = ?");
 
         select.setConsistencyLevel(ConsistencyLevel.ONE);
         BoundStatement boundStatement = new BoundStatement(select);
         boundStatement.bind("1601RH14055", "2013-01-01");
         for (Row row : session.execute(boundStatement).all()) {
-            ;
             dataset.addValue(row.getDouble(4), "1601RH14055", row.getDate(2));
         }
         System.out.println("done");
